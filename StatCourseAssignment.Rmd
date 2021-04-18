@@ -89,7 +89,9 @@ x <- sort(rnorm(m))
 What we have done here is scaled our distribution by subtracting the mean from it and dividing my standard deviation. For reference we take a standard normal distribution(mu = 0, sd = 1) of 1000 points. Now we plot with the reference standard normal distribution in X axis and our distribution (scaled). If that is close to a straight line, then we can safely conclude that our Distribution is Normal.
 
 ```{r Normal Plot}
-plot(x,z.sdom,main="Sampling Distribution of Means vs Random Normal Distribution",xlab="Random Normal Distribution",ylab="Sampling Distribution of Means")
+plot(x,z.sdom
+     ,main="Sampling Distribution of Means vs Random Normal Distribution"
+     ,xlab="Random Normal Distribution",ylab="Sampling Distribution of Means")
 ```
 
 This graph is self evident. We can see that Standard Normal Distribution and our Distribution (scaled) lie almost on one straight line.
