@@ -9,15 +9,26 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-***ToothGrow Dataset Inferential Analysis***
+# ToothGrow Dataset Inferential Analysis
+
+This is an analysis on the ToothGrow dataset in library datasets. In short this dataset is a study on length of Odontoblasts in 60 guinea pigs where each animal received a certain dose (0.5,1 or 2 mg/day) of Vitamin C through one of the two delivery methods viz. Orange Juice (OJ) or Ascorbic Acid Vitamin C (VC)
+
 Let us first load the dataset and perform some basic EDA.
 
-```{r Load Dataset}
+```{r echo=FALSE,results='HIDE'}
+Sys.setenv(R_GSCMD="C:\\Program Files\\gs\\gs9.54.0\\bin\\gswin64.exe")
+```
+
+```{r LoadLibraries, echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 library(datasets)
 library(ggplot2)
 library(RColorBrewer)
 library(combinat)
 library(knitr)
+library(kableExtra)
+```
+
+```{r Load Dataset}
 
 tg <- ToothGrowth
 tg$dose <- as.factor(tg$dose)
@@ -60,11 +71,32 @@ comb.supp.pvalues <- as.data.frame(t(comb.supp.pvalues))
 colnames(comb.supp.pvalues) <- c("Method.1","Method.2","P.Value")
 comb.supp.pvalues$P.Value <- as.numeric(levels(comb.supp.pvalues$P.Value)[comb.supp.pvalues$P.Value])
 comb.supp.pvalues$VERDICT <- with(comb.supp.pvalues,ifelse(P.Value < 0.05,"SIGNIFICANT",
-                                                                  ifelse((P.Value >= 0.05) & (P.Value < 0.1), "BORDERLINE","INSIGNIFICANT")))
+    ifelse((P.Value >= 0.05) & (P.Value < 0.1), "BORDERLINE","INSIGNIFICANT")))
 color.significant <- which(comb.supp.pvalues$VERDICT=="SIGNIFICANT")
 color.borderline <- which(comb.supp.pvalues$VERDICT=="BORDERLINE")
 color.insignificant <- which(comb.supp.pvalues$VERDICT=="INSIGNIFICANT")
 comb.supp.pvalues$VERDICT <- as.factor(comb.supp.pvalues$VERDICT)
-
-kable(split(comb.supp.pvalues,comb.supp.pvalues$VERDICT))
+list.supp.pvalues <- split(comb.supp.pvalues,comb.supp.pvalues$VERDICT)
 ```
+Let us study the Pair-wise T Test Statistics
+
+```{r results}
+#kable(list.supp.pvalues)
+rdylgn <- brewer.pal(name="RdYlGn",n=11)
+
+kable(comb.supp.pvalues,"latex", caption = "Pair wise Testing", booktabs = T, align = "c") %>%
+  kable_styling(latex_options = "HOLD_position") %>%
+row_spec(color.significant, bold = T, color = rdylgn[11]) %>%
+row_spec(color.borderline, bold = T, color = rdylgn[3]) %>%
+row_spec(color.insignificant, bold = T, color = rdylgn[1])
+```
+
+# Conclusion
+
+1. The finding matches with the Box Plot. 
+
+2. There is no statistical significance to suggest that for a fixed Dose = 2, the delivery method viz. OJ/VC has any specific impact 
+
+3. While the Dose increases from 1 to 2, the Delivery method if changed from OJ to VC, there is no statistical significance to suggest that there is any change in length of Odontoblasts.
+
+4. Apart from the above exceptions, a general trend is that with increase in dosage, length of Odontoblasts increases and Orange Juice (OJ) has greater impact on length as compared with Ascorbic Acid Vitamin C (VC)
