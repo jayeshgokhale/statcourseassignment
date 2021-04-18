@@ -76,11 +76,10 @@ color.significant <- which(comb.supp.pvalues$VERDICT=="SIGNIFICANT")
 color.borderline <- which(comb.supp.pvalues$VERDICT=="BORDERLINE")
 color.insignificant <- which(comb.supp.pvalues$VERDICT=="INSIGNIFICANT")
 comb.supp.pvalues$VERDICT <- as.factor(comb.supp.pvalues$VERDICT)
-list.supp.pvalues <- split(comb.supp.pvalues,comb.supp.pvalues$VERDICT)
 ```
 Let us study the Pair-wise T Test Statistics
 
-```{r results}
+```{r results, echo=FALSE}
 #kable(list.supp.pvalues)
 rdylgn <- brewer.pal(name="RdYlGn",n=11)
 
