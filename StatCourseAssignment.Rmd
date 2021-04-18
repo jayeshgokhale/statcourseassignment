@@ -1,6 +1,6 @@
 ---
 title: "Statistics Assignment"
-author: "Myself"
+author: "Jayesh Gokhale"
 date: "4/17/2021"
 output: pdf_document
 ---

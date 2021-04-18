@@ -1,0 +1,70 @@
+---
+title: "ToothGrow Inferential Analysis"
+author: "Jayesh Gokhale"
+date: "4/18/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***ToothGrow Dataset Inferential Analysis***
+Let us first load the dataset and perform some basic EDA.
+
+```{r Load Dataset}
+library(datasets)
+library(ggplot2)
+library(RColorBrewer)
+library(combinat)
+library(knitr)
+
+tg <- ToothGrowth
+tg$dose <- as.factor(tg$dose)
+ggplot(data=tg, aes(x=dose,y=len,fill=supp)) +
+  geom_boxplot(outlier.colour="black", 
+               outlier.size=2,position=position_dodge(1)) + 
+  labs(title = "Tooth Grow Data Set",
+       subtitle = "",
+       y = "Length of Odontoblasts", x = "Dose") +
+    scale_fill_brewer(palette="Accent")  +
+  theme(plot.title = element_text(hjust = 0.5))  
+```
+
+So we can see that visually the Length increases with increase in dosage and generally the length is higher for OJ (Orange Juice) for Dosage = 0.5 and 1 as compared to VC (Ascorbic Acid Vitamin C). For Dosage = 2, we can see that the median length for both OJ and VC seem to be the same but there is a high amount of variance with VC as compared to OJ.
+
+Let us confirm this with Hypothesis Testing. We have two things to confirm.
+
+1. Increase in Dose causes an Increase in Length of Odontoblasts across both Delivery Methods (OJ and VC)
+2. Across each Dose, OJ provides higher increase in length.
+
+```{r splitdataset}
+tg$supp.dose <- paste0(tg$supp,".",tg$dose)
+tg$supp.dose <- as.factor(tg$supp.dose)
+supp.doses <- levels(tg$supp.dose)
+n.supp.dose <- length(supp.doses)
+
+mat.comparison <- matrix(rep(0,n.supp.dose**2),n.supp.dose,n.supp.dose)
+rownames(mat.comparison) <- supp.doses
+colnames(mat.comparison) <- supp.doses
+for (i in 1:n.supp.dose) mat.comparison[i,i] <- "X"
+
+comb.supp.doses <- combn(levels(tg$supp.dose),2)
+comb.supp.pvalues <- rbind(comb.supp.doses,
+apply(comb.supp.doses,2,function(x)
+{
+  t.test(len~supp.dose,data=tg[tg$supp.dose %in% x,])$p.value
+}
+  ))
+comb.supp.pvalues <- as.data.frame(t(comb.supp.pvalues))
+colnames(comb.supp.pvalues) <- c("Method.1","Method.2","P.Value")
+comb.supp.pvalues$P.Value <- as.numeric(levels(comb.supp.pvalues$P.Value)[comb.supp.pvalues$P.Value])
+comb.supp.pvalues$VERDICT <- with(comb.supp.pvalues,ifelse(P.Value < 0.05,"SIGNIFICANT",
+                                                                  ifelse((P.Value >= 0.05) & (P.Value < 0.1), "BORDERLINE","INSIGNIFICANT")))
+color.significant <- which(comb.supp.pvalues$VERDICT=="SIGNIFICANT")
+color.borderline <- which(comb.supp.pvalues$VERDICT=="BORDERLINE")
+color.insignificant <- which(comb.supp.pvalues$VERDICT=="INSIGNIFICANT")
+comb.supp.pvalues$VERDICT <- as.factor(comb.supp.pvalues$VERDICT)
+
+kable(split(comb.supp.pvalues,comb.supp.pvalues$VERDICT))
+```
