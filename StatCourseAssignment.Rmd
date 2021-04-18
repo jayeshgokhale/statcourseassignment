@@ -1,7 +1,7 @@
 ---
-title: "Statistics Assignment"
+title: "Statistics Assignment (Simulation)"
 author: "Jayesh Gokhale"
-date: "4/17/2021"
+date: "4/18/2021"
 output: pdf_document
 ---
 
@@ -9,7 +9,9 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**Simulation Exercise for Central Limit Theorem**
+# Simulation Exercise for Central Limit Theorem
+
+What we intend to do here is simulate 40 random numbers in an exponential distribution and get the means of such numbers. Repeat this experiment 1000 times and observe the distribution of means. This is called **sampling distribution of means**.
 
 ```{r simulation}
 set.seed(100)
@@ -32,23 +34,23 @@ pc.diff.variance <- round(diff.variance*100/theoretical.variance,2)
 ```
 **Analysis of Means**
 
-Theoretical Mean of Distribution = Population Mean =  1/Lambda = `r theoretical.mean`
+Theoretical Mean of Distribution = Population Mean =  1/Lambda = **`r theoretical.mean`**
 
-Sample Mean = `r sample.mean`
+Sample Mean = **`r sample.mean`**
 
-Difference (Absolute) = `r diff.mean`
+Difference (Absolute) = **`r diff.mean`**
 
-Percentage Difference (Absolute) = `r pc.diff.mean`
+Percentage Difference (Absolute) = **`r pc.diff.mean`**
 
 **Analysis of Variance**
 
-Theoretical Variance of Distribution = (Population Variance)/n = (1/Lambda^2)/n = `r theoretical.variance`
+Theoretical Variance of Distribution = (Population Variance)/n = (1/Lambda^2)/n = **`r theoretical.variance`**
 
-Sample Variance = `r sample.variance`
+Sample Variance = **`r sample.variance`**
 
-Difference (Absolute) = `r diff.variance`
+Difference (Absolute) = **`r diff.variance`**
 
-Percentage Difference (Absolute) = `r pc.diff.variance`
+Percentage Difference (Absolute) = **`r pc.diff.variance`**
 
 **Analysis of Distribution**
 
@@ -59,6 +61,7 @@ par(mfrow = c(1, 2))
 hist(rexp(m*n,lambda),main="Exponential Distribution",xlab="Value")
 hist(sdom,main="Sampling Distribution of Means",xlab="Value")
 ```
+
 Now to me this right side figure looks like a Normal Distribution. But without going into any elaborate normality tests (like Anderson Darling Test), let us first do some basic checks. What we know for a fact that if the sampling distribution of means is normally distributed, it should follow the 68-95-99 rule. Let us test that out first.
 
 ```{r test for normality}
@@ -72,7 +75,7 @@ fraction.sd.2 <- round(length(sdom.sd.2)*100/length(sdom),2)
 fraction.sd.3 <- round(length(sdom.sd.3)*100/length(sdom),2)
 ```
 
-The percentages of observations in plus/minus 1, 2 and 3 sigma range are `r fraction.sd.1`, `r fraction.sd.2` and `r fraction.sd.3`
+The percentages of observations in plus/minus 1, 2 and 3 sigma range are **`r fraction.sd.1`**, **`r fraction.sd.2`** and **`r fraction.sd.3`**.
 
 This seems to be very much in conformance to Normal Distribution. Let us do one more thing. 
 
@@ -83,11 +86,13 @@ z.sdom <- sort(z.sdom)
 x <- sort(rnorm(m))
 ```
 
-What we have done here is scaled our distribution close to Standard Normal Distribution (we believe so) so that we can compare with one. For reference we take a standard normal distribution of 1000 points. Now we plot with the reference standard normal distribution in X axis and our distribution (scaled). If that is close to a straight line, then we can safely conclude that our Distribution is Normal.
+What we have done here is scaled our distribution by subtracting the mean from it and dividing my standard deviation. For reference we take a standard normal distribution(mu = 0, sd = 1) of 1000 points. Now we plot with the reference standard normal distribution in X axis and our distribution (scaled). If that is close to a straight line, then we can safely conclude that our Distribution is Normal.
 
 ```{r Normal Plot}
 plot(x,z.sdom,main="Sampling Distribution of Means vs Random Normal Distribution",xlab="Random Normal Distribution",ylab="Sampling Distribution of Means")
 ```
 
-This graph is self evident. **We can safely conclude that the distribution is NORMAL**
+This graph is self evident. We can see that Standard Normal Distribution and our Distribution (scaled) lie almost on one straight line.
+
+**We can hence safely conclude that the sampling distribution of 1000 means of 40 random exponentials is NORMAL**
 
